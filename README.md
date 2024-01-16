@@ -7,7 +7,7 @@ Rust 宏，用于自动为任意 struct 生成 builder pattern 代码。
 ### 引入依赖
 ```toml
 [dependencies]
-struct-builder = { github = "https://github.com/hi-liyan/struct-builder" }
+struct-builder = { version = "0.1.0", git = "https://github.com/hi-liyan/struct-builder.git" }
 ```
 
 ### 代码示例
