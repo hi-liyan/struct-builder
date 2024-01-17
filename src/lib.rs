@@ -4,7 +4,7 @@ use quote::quote;
 use syn::parse_macro_input;
 
 #[proc_macro_derive(Builder)]
-pub fn derive(input: TokenStream) -> TokenStream {
+pub fn derive_builder(input: TokenStream) -> TokenStream {
     let st = parse_macro_input!(input as syn::DeriveInput);
 
     match do_expand(&st) {
@@ -15,7 +15,7 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
 type StructFields = syn::punctuated::Punctuated<syn::Field, syn::Token![,]>;
 
-// 从 DeriveInput 解析结构体中的 fields
+/// 从 DeriveInput 解析结构体中的 fields
 fn get_fields_from_derive_input(st: &syn::DeriveInput) -> syn::Result<&StructFields> {
     if let syn::Data::Struct(syn::DataStruct { fields: syn::Fields::Named(syn::FieldsNamed { named, .. }), .. }) = &st.data {
         Ok(named)
@@ -24,7 +24,7 @@ fn get_fields_from_derive_input(st: &syn::DeriveInput) -> syn::Result<&StructFie
     }
 }
 
-// 生成 Builder 结构体的 fields 代码
+/// 生成 Builder 结构体的 fields 代码
 fn gen_builder_struct_fields_token(fields: &StructFields) -> syn::Result<proc_macro2::TokenStream> {
     let field_idents: Vec<_> = fields.iter().map(|it| { &it.ident }).collect();
     let field_types: Vec<_> = fields.iter().map(|it| { &it.ty }).collect();
@@ -36,7 +36,7 @@ fn gen_builder_struct_fields_token(fields: &StructFields) -> syn::Result<proc_ma
     Ok(ret)
 }
 
-// 生成 Builder 实例中每一个 field 的初始化代码
+/// 生成 Builder 实例中每一个 field 的初始化代码
 fn gen_builder_struct_fields_init_token(fields: &StructFields) -> syn::Result<proc_macro2::TokenStream> {
     let field_idents: Vec<_> = fields.iter().map(|it| { &it.ident }).collect();
 
@@ -67,7 +67,7 @@ fn gen_builder_impl_field_fn_token(fields: &StructFields) -> syn::Result<proc_ma
     Ok(ret)
 }
 
-// 生成 Builder impl 中的 build 函数
+/// 生成 Builder impl 中的 build 函数
 fn gen_builder_impl_build_fn_token(fields: &StructFields, struct_ident: &syn::Ident) -> syn::Result<proc_macro2::TokenStream> {
     let field_idents: Vec<_> = fields.iter().map(|it| { &it.ident }).collect();
 
